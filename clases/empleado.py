@@ -1,3 +1,4 @@
+from usuario import Usuario
 
-class Empleado():
+class Empleado(Usuario):
     pass

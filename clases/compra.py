@@ -1,3 +1,4 @@
+from entidad_base import EntidadBase
 
-class Compra():
+class Compra(EntidadBase):
     pass

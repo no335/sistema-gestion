@@ -1,3 +1,4 @@
+from entidad_base import EntidadBase
 
-class Servicio():
+class Servicio(EntidadBase):
     pass

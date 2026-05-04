@@ -1,3 +1,4 @@
+from usuario import Usuario
 
-class Cliente():
+class Cliente(Usuario):
     pass

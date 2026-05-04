@@ -1,0 +1,16 @@
+id,nombre,fecha_creacion,costo
+1,limpieza regular,2022-01-01,100
+2,limpieza profunda,2022-01-01,200
+3,lavado tapetería,2022-01-01,75
+4,lavado baños,2022-01-01,50
+5,lavado vehículo pequeño,2023-05-06,40
+6,lavado vehículo normal,2023-05-06,60
+7,lavado vehículo grande,2023-05-06,120
+8,mudanza,2023-05-06,200
+9,instalación muebles,2023-05-06,44
+10,pintura,2023-05-06,190
+11,entapetado,2023-05-06,170
+12,paseo mascotas,2023-05-06,44
+13,acompañamiento ,2023-05-06,100
+14,asistencia cocina,2023-05-06,110
+15,encuentros grupales,2023-05-06,108
