@@ -1,12 +1,6 @@
 import json
 
-objects = {
-    'clientes': 'data/clientes.json',
-    'compras': 'data/compras.json',
-    'empleados': 'data/empleados.json',
-    'servicios': 'data/servicios.json',
-    'ventas': 'data/ventas.json',
-}
+objects = {}
 
 def read(object):
     ## pendiente try catch si recibe objeto equivocado
