@@ -38,6 +38,17 @@ frame2 = ttk.Frame(root)
 # frame2.columnconfigure(1, weight=1)
 frame2.grid(column=1, row=0)
 
+popup_login = ttk.Button(
+    frame2,
+    text='Login',
+    command=lambda: abrir_popup(LoginPopup, root)
+)
+popup_login.pack(
+    ipadx=5,
+    ipady=5,
+    expand=True
+)
+
 popup_cliente = ttk.Button(
     frame2,
     text='Clientes',
@@ -62,7 +73,7 @@ popup_compra.pack(
 
 popup_empleado = ttk.Button(
     frame2,
-    text='Empleado',
+    text='Empleados',
     command=lambda: abrir_popup(EmpleadoPopup, root)
 )
 popup_empleado.pack(
@@ -71,16 +82,7 @@ popup_empleado.pack(
     expand=True
 )
 
-popup_login = ttk.Button(
-    frame2,
-    text='Login',
-    command=lambda: abrir_popup(LoginPopup, root)
-)
-popup_login.pack(
-    ipadx=5,
-    ipady=5,
-    expand=True
-)
+
 
 popup_servicio = ttk.Button(
     frame2,
