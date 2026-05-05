@@ -7,7 +7,7 @@ from modulos.empleado.vista_empleado import EmpleadoPopup
 from modulos.login.vista_login import LoginPopup
 from modulos.servicio.vista_servicio import ServicioPopup
 from modulos.venta.vista_venta import VentaPopup
-
+# from modulos.cliente.modelo_cliente import Cliente
 
 root = tk.Tk()
 root.geometry('300x230')
@@ -17,27 +17,21 @@ root.iconbitmap('./assets/rocket_space_icon_185991.ico')
 
 frame = ttk.Frame(root)
 frame.columnconfigure(0, weight=1)
-
 frame.grid(column=0, row=0)
-
 canvas = tk.Canvas(frame, width=199, height=199, bg='white')
 canvas.pack(side=tk.LEFT)
-
 python_image = tk.PhotoImage(file='assets/robot.png')
 canvas.create_image(
     (100, 100),
     image=python_image
 )
 
-
 def abrir_popup(clase_popup, root):
     popup = clase_popup(root)
     popup.abrir()
 
 frame2 = ttk.Frame(root)
-# frame2.columnconfigure(1, weight=1)
 frame2.grid(column=1, row=0)
-
 popup_login = ttk.Button(
     frame2,
     text='Login',
@@ -82,8 +76,6 @@ popup_empleado.pack(
     expand=True
 )
 
-
-
 popup_servicio = ttk.Button(
     frame2,
     text='Servicios',
@@ -94,7 +86,6 @@ popup_servicio.pack(
     ipady=5,
     expand=True
 )
-
 
 popup_venta = ttk.Button(
     frame2,

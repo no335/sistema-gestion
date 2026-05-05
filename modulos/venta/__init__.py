@@ -1,2 +1,2 @@
-from base.app_data import objects
-objects['ventas'] = 'modulos/venta/ventas.csv'
+from base.app_data import base_datos
+base_datos['venta'] = 'modulos/venta/ventas.csv'
