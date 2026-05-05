@@ -1,4 +1,4 @@
 from base.modelo_entidad import Entidad
 
-class CompraEntidad(Entidad):
+class Compra(Entidad):
     pass

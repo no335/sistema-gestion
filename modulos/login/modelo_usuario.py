@@ -1,6 +1,6 @@
-from base import Entidad
+from base.modelo_entidad import Entidad
 
-class UsuarioEntidad(Entidad):
+class Usuario(Entidad):
     
     def iniciar_sesion(self, usuario, contraseña):
         pass

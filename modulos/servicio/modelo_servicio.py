@@ -1,4 +1,4 @@
-from .base import Entidad
+from base.modelo_entidad import Entidad
 
-class ServicioEntidad(Entidad):
+class Servicio(Entidad):
     pass

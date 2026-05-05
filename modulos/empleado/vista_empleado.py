@@ -1,4 +1,5 @@
 from base.vista_popup import BasePopup
+from .empleado_modelo import EmpleadoEntidad
 
 class EmpleadoPopup(BasePopup):
     

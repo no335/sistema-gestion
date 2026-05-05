@@ -1,4 +1,4 @@
-from ..base.modelo_entidad import Entidad
+from base.modelo_entidad import Entidad
 
-class VentaEntidad(Entidad):
+class Venta(Entidad):
     pass

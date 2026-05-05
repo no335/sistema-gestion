@@ -1,4 +1,4 @@
-from base.modelo_entidad import Entidad
+from ..login.modelo_usuario import Usuario
 
-class Empleado(Usuario):
+class EmpleadoEntidad(Usuario):
     pass

@@ -10,3 +10,5 @@ class BasePopup():
         self.popup = tk.Toplevel(self.root)
         self.popup.title(title)
         self.popup.geometry('400x600')
+        self.popup.iconbitmap('./assets/rocket_space_icon_185991.ico')
+
