@@ -1,42 +1,88 @@
+# base para todos los objetos del sistema
+# utiliza el app_data para leer y escribir
+# en los archivos los datos generados
 from base import app_data
 
+# define una clase
 class Entidad():
+    # propiedad de la clase
+    # el campo nombre_modelo guarda la clave en 
+    # el diccionario app_data.base_datos
     nombre_modelo = 'entidad'
+
+    # propiedad de la clase
+    # el listado de columnas se usa para
+    # saber qué columnas se deben guardar en el csv
     columnas = [
         'id', 'nombre', 'fecha_creacion'
     ]
     
+    # constructor -- por defecto los campos compartidos por otros
+    # son id, nombre y fecha creación, puede recibir más en las subclases
+    # pero se ignoran en kwargs
     def __init__(self, id=None, nombre=None, fecha_creacion=None, **kwargs):
         self.id = id
         self.nombre = nombre
         self.fecha_creacion = fecha_creacion
 
+    # metodo de clase para generar una instancia desde un diccionario
     @classmethod
     def desde_diccionario(cls, detalle):
-        print(detalle)
+        """Genera una instancia utilizando el diccionario detalle"""
+        ### *pendiente* MANEJO EXCEPCION cuando el diccionario tiene campos equivocados
+        # generar la instancia
         obj = cls(**detalle)
+        # y devolverla
         return obj
     
+    # método de clase para buscar un objeto utilizando el id
     @classmethod
     def buscar(cls, id=None):
+        """Busca en el archivo asociado un elemento con el id recibido
+        si existe genera una instancia con ese objeto y la
+        devuelve, si no devuelve none
+        Si no recibe id devuelve todos los objetos del tipo en un
+        list"""
+        # si recibe un id buscarlo
         if id is not None:
+            # buscar la fila con ese id, y obtenerla como un diccionario
             diccionario = app_data.encontrar_id(cls.nombre_modelo, id)
+            # generar una instancia a partir del diccionario
             return cls.desde_diccionario(diccionario)
         else:
+            # cargar todas las filas en el archivo como un list de dict
             diccionarios = app_data.cargar(cls.nombre_modelo)
+            # generar un list de instancias utilizando la sintaxis
+            # compacta para generación de list
             return [cls.desde_diccionario(d) for d in diccionarios]
-
+    
+    # guardar un objeto
     def guardar(self):
+        """Guarda el objeto dado. Revisa si tiene un valor para id
+        si lo tiene lo actualiza, si no lo agrega como nuevo"""
+        # revisar si hay id
         if self.id is None:
+            # agregarlo al final del archivo
             base.agregar(self.nombre_modelo, self.diccionario())
         else:
+            #si tiene id entonces reemplazarlo en la fila en que está
             base.actualizar(self.nombre_modelo, self.diccionario())
-        
+
+    # convierte el objeto en diccionario        
     def diccionario(self):
+        """Recorre todos las columnas listadas en self.columnas
+        y genera un diccionario con los valores asociados a cada una"""
+        # diccionario agregador
         diccionario = {}
+        # iterar sobre columnas
         for col in self.columnas:
-            diccionario[i] = getattr(col)
+            # agregar la propiedad i-esicma como string
+            diccionario[i] = str(getattr(col))
+        # devolver el objeto
         return diccionario
 
+    # metodo por defecto usado para convertir
+    # el objeto a string
     def __str__(self):
-        return str({ c: getattr(self, c) for c in self.columnas})
+        # imprime el diccionario generado 
+        return str(self.diccionario())

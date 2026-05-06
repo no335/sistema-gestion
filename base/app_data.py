@@ -1,53 +1,111 @@
+# este modulo se encarga de manejar los datos
+# utiliza la librería csv para leer archivos
+# en formarto csv (comma separated values o valores separados por coma)
 import csv
 
+# tiene un diccionario principal para guardar la localización de cada
+# tipo de objeto.
+# la clave es el tipo de objeto y el valor es la ruta del archivo
 base_datos = {}
 
+# cargar los datos de un modelo dado
 def cargar(nombre_modelo):
-    print(base_datos, nombre_modelo)
-    print(base_datos.get(nombre_modelo))
-    print("* * *")
-    ## pendiente try catch si recibe objeto equivocado
+    """
+    Recibe el nombre del modelo ('cliente', 'usuario')
+    y devuelve los datos que están en el archivo asociado en 
+    el diccionario base_datos"""
+    ## **pendiente** MANEJO EXCEPCION si recibe objeto equivocado
+    # abrir el archivo para lectura
     with open(base_datos.get(nombre_modelo), 'r') as data_file:
+        # utilizar la librería csv para cargar el archivo
+        # como un list de diccionarios de python
         csv_reader = csv.DictReader(data_file)
+        # poner todos los objetos en un list 
+        # utilizando la sintaxis para la generación 
+        # de un list a partir de un iterable
+        ## devolver list de diccionarios
+        ## [{'id': ---, 'nombre': ---}, {...}, ...]
         return [el for el in csv_reader]
-        ## devolver listado de diccionarios
-        ## {'id': ---, 'nombre': ---}
         pass
 
+# encontrar un objeto en particular de un modelo dado
 def encontrar_campo(nombre_modelo, campo, valor):
-    listado = cargar(nombre_modelo)
-    for i in listado:
+    """Devuelve un diccionario {'id': ..., 'nombre': ...} 
+    con el primer objeto en el archivo asociado a ese nombre_modelo ('cliente', 'usuario', ...)
+    que tenga el valor recibido en el campo dado
+    -Supone que todos los valores son str-
+    """
+    ## **pendiente** MANEJO EXCEPCION si el campo dado no existe
+    ## en eltipo de objeto dado
+
+    # carga los objetos un list
+    diccionarios = cargar(nombre_modelo)
+    # itera en el list
+    for i in diccionarios:
+        # revisa el campo
         if i['id'] == str(id):
             return i
 
+# encontrar objeto por id
 def encontrar_id(nombre_modelo, id):
+    """Similar a encontrar_campo en este caso busca
+    el objeto por el valor en el campo id"""
     return encontrar_campo(nombre_modelo, campo='id', valor=id)
 
+# actualizar un objeto existente
 def actualizar(nombre_modelo, diccionario):
-    listado = cargar(nombre_modelo)
+    """Escribe los cambios realizados en un objeto 
+    dado en el archivo asociado"""
+    # carga un diccionarios de diccionarios
+    diccionarios = cargar(nombre_modelo)
     idx = None
-    for i, datos in enumerate(listado):
+    # itera sobre los objetos enumerados con i
+    for i, datos in enumerate(diccionarios):
+        # si encuentra uno con el id en el diccionario recibido guarda 
+        # el indice asociado
         if datos['id'] == diccionario['id']:
             idx = i
+            # salir del for
             break
+    # si encontró un objeto con ese id
     if idx is not None:
-        listado[idx] = diccionario
-    guardar(nombre_modelo, listado)
+        # reemplaza el valor en el diccionario dado
+        diccionarios[idx] = diccionario
+    # escribe el list en el archivo dado
+    guardar(nombre_modelo, diccionarios)
 
+# crear un nuevo objeto
 def agregar(nombre_modelo, diccionario):
-    listado = cargar(nombre_modelo)
-    if len(listado) > 0:
-        diccionario['id'] = listado[-1] + 1
-    listado.append(diccionario)
-    write(nombre_modelo, listado)
+    """Escribe en el disco los cambios a un archivo asociado
+    a un modelo dado, agregando el diccionario dado"""
+    # carga el lsit de objetos del disco
+    diccionarios = cargar(nombre_modelo)
+    # busca el último id registrado para 
+    # agregar uno diferente
+    # --supone que los ids estan ordenados
+    if len(diccionarios) > 0:
+        diccionario['id'] = diccionarios[-1] + 1
+    else:
+        # si no hay nada empieza a contar en 1
+        diccionario['id'] = 1
+    # agrega el objeto al diccionario
+    diccionarios.append(diccionario)
+    # escribe en el disco
+    guardar(nombre_modelo, diccionarios)
 
+# escribir los diccionarios recibidos en el disco
 def guardar(nombre_modelo, listado):
-    ## pendiente try catch si recibe objeto equivocado
+    """Escribe en el archivo asociado a nombre_modelo en 
+    base_datos el listado recibido de diccionarios"""
+    
+    ## pendiente MANEJO EXCEPCION si recibe objeto equivocado
     with open(base_datos.get(nombre_modelo), 'w') as data_file:
-        ## pendiente try catch si no puede escribir
-        json.dump(listado, data_file)
+        ## pendiente MANEJO EXCEPCION si no puede escribir
+        ## pendiente escribir CSV
+        pass
   
-def prueba_escritura():
+# prueba lectura
+def prueba_lectura():
     clientes = cargar('clientes')
     for i in clientes[0:3]:
         print(i)
@@ -63,3 +121,4 @@ def prueba_escritura():
     ventas = cargar('ventas')
     for i in ventas[0:3]:
         print(i)
+
