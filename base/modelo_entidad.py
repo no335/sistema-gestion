@@ -63,10 +63,10 @@ class Entidad():
         # revisar si hay id
         if self.id is None:
             # agregarlo al final del archivo
-            base.agregar(self.nombre_modelo, self.diccionario())
+            app_data.agregar(self.nombre_modelo, self.diccionario(), self.columnas)
         else:
             #si tiene id entonces reemplazarlo en la fila en que está
-            base.actualizar(self.nombre_modelo, self.diccionario())
+            app_data.actualizar(self.nombre_modelo, self.diccionario(), self.columnas)
 
     # convierte el objeto en diccionario        
     def diccionario(self):
@@ -77,7 +77,10 @@ class Entidad():
         # iterar sobre columnas
         for col in self.columnas:
             # agregar la propiedad i-esicma como string
-            diccionario[i] = str(getattr(col))
+            if getattr(self, col):
+                diccionario[col] = str(getattr(self, col))
+            else:
+                diccionario[col] = None
         # devolver el objeto
         return diccionario
 
@@ -85,4 +88,4 @@ class Entidad():
     # el objeto a string
     def __str__(self):
         # imprime el diccionario generado 
-        return str(self.diccionario())
+        return f"{self.nombre_modelo}::{self.diccionario()}"

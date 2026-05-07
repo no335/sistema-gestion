@@ -1,0 +1,29 @@
+id,nombre,fecha_creacion,usuario,clave
+1,Justin Case,2022-05-23,usuario1,clave
+2,Jim Sox,2022-08-02,usuario2,clave
+3,Doreen D Wall,2022-10-213,usuario,clave
+4,Zenda Flowers,2022-12-02,usuario4,clave
+5,Zelda Zoule,2022-12-13,usuario5,clave
+6,Seymour Butz,2022-12-27,usuario6,clave
+7,Homero Thompson,2021-01-02,usuario7,clave
+8,Rich Elders,2021-02-11,usuario8,clave
+9,June Flowers,2021-03-07,usuario9,clave
+10,Mararet Thompson,2021-04-26,usuario10,clave
+11,Annie Seed,2021-06-11,usuario11,clave
+12,Rita Book,2021-06-18,usuario12,clave
+13,Robin Banks,2021-09-05,usuario13,clave
+14,Crystall Ball,2021-10-13,usuario14,clave
+15,Candice B Fureal,2023-01-2515,usuario,clave
+16,Emma Tator,2023-12-10,usuario16,clave
+17,Page Turner,2025-02-22,usuario17,clave
+18,Yvoone Moore,2025-06-25,usuario18,clave
+19,Dwight A Capella,2026-01-1319,usuario,clave
+21,Amanda Hugginkiss,2021-01-02,gerente,
+22,Sherwood Burns ,2021-10-13,coordinador,1
+23,Cruz D Rivers,2022-02-10,campo,2
+24,Oliver Klozoff,2022-02-24,campo,2
+25,Faye King,2022-10-21,coordinador,1
+26,Heywood U Kuddulmee,2023-06-18,campo,5
+27,Ollie Tabooger,2024-03-20,campo,5
+28,Albert Ross,2024-08-09,campo,2
+29,Chess Payne,2025-02-22,campo,5
