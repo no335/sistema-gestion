@@ -1,5 +1,5 @@
 from base.vista_popup import BasePopup
-from .modelo_venta import Venta
+from .modelo_reserva import Reserva
 
 class ReservaPopup(BasePopup):
     
