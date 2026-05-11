@@ -12,7 +12,13 @@ from modulos.empleado.vista_empleado import EmpleadoPopup
 from modulos.login.vista_login import LoginPopup
 from modulos.servicio.vista_servicio import ServicioPopup
 from modulos.venta.vista_venta import VentaPopup
-# from modulos.cliente.modelo_cliente import Cliente
+
+def pruebas_cliente():
+    from modulos.cliente.pruebas_cliente import prueba_creacion, prueba_actualizacion, prueba_creacion_error, prueba_actualizacion_error
+    prueba_creacion()
+    prueba_creacion_error()
+    prueba_actualizacion()
+    prueba_actualizacion_error()
 
 # Generar la ventana base
 root = tk.Tk()

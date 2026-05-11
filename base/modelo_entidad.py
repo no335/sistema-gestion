@@ -2,6 +2,14 @@
 # utiliza el app_data para leer y escribir
 # en los archivos los datos generados
 from base import app_data
+# logger para guardar mensajes del sistema
+import logging
+# se crea o se obtiene una instancia de logger
+# relacionada con el nombre del módulo
+logger = logging.getLogger(__name__)
+
+class EntidadException(Exception):
+    pass
 
 # define una clase
 class Entidad():
@@ -46,27 +54,53 @@ class Entidad():
         # si recibe un id buscarlo
         if id is not None:
             # buscar la fila con ese id, y obtenerla como un diccionario
-            diccionario = app_data.encontrar_id(cls.nombre_modelo, id)
+            try:
+                diccionario = app_data.encontrar_id(cls.nombre_modelo, id)
+            except app_data.AppDataException:
+                logger.error(f"Entidad.buscar<{cls.nombre_modelo}>(id={id})")
+                raise EntidadException("No puede leer objeto")
+            if not diccionario:
+                return None
             # generar una instancia a partir del diccionario
             return cls.desde_diccionario(diccionario)
         else:
             # cargar todas las filas en el archivo como un list de dict
-            diccionarios = app_data.cargar(cls.nombre_modelo)
+            try:
+                diccionarios = app_data.cargar(cls.nombre_modelo)
+            except:
+                logger.error(f"Entidad.buscar<{cls.nombre_modelo}>(id={id})")
+                raise EntidadException("No puede leer objeto")
+            if not diccionarios:
+                return
             # generar un list de instancias utilizando la sintaxis
             # compacta para generación de list
             return [cls.desde_diccionario(d) for d in diccionarios]
+
+    # cambiar datos cliente
+    def actualizar(self, diccionario):
+        for el in diccionario:
+            if el in self.columnas:
+                setattr(self, el, diccionario[el])
+            else:
+                logger.error(f'Entridad.actualizar: La propiedad {el} no existe en {self.nombre_modelo}')
+                raise EntidadException(f"No exite la propiedad {el}")
     
     # guardar un objeto
     def guardar(self):
         """Guarda el objeto dado. Revisa si tiene un valor para id
         si lo tiene lo actualiza, si no lo agrega como nuevo"""
         # revisar si hay id
-        if self.id is None:
-            # agregarlo al final del archivo
-            app_data.agregar(self.nombre_modelo, self.diccionario(), self.columnas)
-        else:
-            #si tiene id entonces reemplazarlo en la fila en que está
-            app_data.actualizar(self.nombre_modelo, self.diccionario(), self.columnas)
+        try:
+            if self.id is None:
+                # agregarlo al final del archivo
+                app_data.agregar(self.nombre_modelo, self.diccionario(), self.columnas)
+            else:
+                #si tiene id entonces reemplazarlo en la fila en que está
+                app_data.actualizar(self.nombre_modelo, self.diccionario(), self.columnas)
+        except app_data.AppDataException as e:
+            logger.error(f"Entidad.guardar<{self.nombre_modelo}>(id={id}): {e}")
+            raise EntidadException("No puede escribir objeto")
+
 
     # convierte el objeto en diccionario        
     def diccionario(self):
