@@ -4,6 +4,7 @@ from tkinter import ttk
 from base.vista_popup import BasePopup
 # utliliza objetos de tipo cliente
 from .modelo_cliente import Cliente
+from base.modelo_entidad import EntidadException
 
 # hereda de BasePopup
 # que define el método abrir y el constructor
@@ -129,14 +130,22 @@ class ClientePopup(BasePopup):
         if nuevo:
             # si es nuevo generar una nueva instancia
             cliente = Cliente()
-        elif treeview and treeview.item(treeview.focus())['values'][0] != '':
+        else:
+            try:
+                indice = treeview and treeview.item(treeview.focus())['values'][0]
+            except IndexError:
+                self.mostrar_error("Debe seleccionar un cliente")
+                return
             #si no es nuevo revisar qué 
             # 1 - esta seleccionado
             # 2 - tiene el id definido en la primera columna la 0
             # buscar el cliente con ese id
-            cliente = Cliente.buscar(treeview.item(treeview.focus())['values'][0])
-        else:
-            # si no no hacer nada
+            try:
+                cliente = Cliente.buscar(indice)
+            except EntidadException:
+                cliente = None
+        if not cliente:
+            self.mostrar_error(mensaje="ERROR: No se puede editar cliente")
             return
         # abrir el popup relacionarlo con la ventana raiz existente
         # y guardarlo en una propiedad de la clase
@@ -214,29 +223,37 @@ class ClientePopup(BasePopup):
             formulario['direccion'].set(cliente.direccion)
         if cliente.tipo:
             formulario['tipo'].set(cliente.tipo)
-        formulario['bloqueado'].set(cliente.bloqueado)
+        try:
+            formulario['bloqueado'].set(bool(int(cliente.bloqueado)))
+        except (ValueError, TypeError):
+            formulario['bloqueado'].set(False)
 
     def guardar_cliente(self, cliente, formulario, treeview):
         """Lee los valores en el formulario y los guarda en el
         objeto y luego lo guarda en el disco"""
-        # tomar valor del campo entry con un StringVal
-        cliente.nombre = formulario['nombre'].get()
-        # tomar valor del campo entry con un StringVal
-        cliente.usuario = formulario['usuario'].get()
-        # tomar valor del campo entry con un StringVal
-        cliente.telefono = formulario['telefono'].get()
-        # tomar valor del campo entry con un StringVal
-        cliente.direccion = formulario['direccion'].get()
-        # tomar valor del campo combobox 
-        cliente.tipo = formulario['tipo'].get()
-        # tomar valor del campo checkbox 1 si está lleno y 0 si está vacío
-        cliente.bloqueado = 1 if formulario['bloqueado'].get() else 0
-        # escribir en el disco
-        cliente.guardar()
-        # recargar el listado
-        self.cargar_listado(treeview)
-        # cerrar ventana de formulario
-        self.formulario.destroy()
+        cliente.actualizar({
+            # tomar valor del campo entry con un StringVal
+            'nombre': formulario['nombre'].get(),
+            # tomar valor del campo entry con un StringVal
+            'usuario': formulario['usuario'].get(),
+            # tomar valor del campo entry con un StringVal
+            'telefono': formulario['telefono'].get(),
+            # tomar valor del campo entry con un StringVal
+            'direccion': formulario['direccion'].get(),
+            # tomar valor del campo combobox 
+            'tipo': formulario['tipo'].get(),
+            # tomar valor del campo checkbox 1 si está lleno y 0 si está vacío
+            'bloqueado': 1 if formulario['bloqueado'].get() else 0,
+            # escribir en el disco
+        })
+        try:
+            cliente.guardar()
+            # recargar el listado
+            self.cargar_listado(treeview)
+            # cerrar ventana de formulario
+            self.formulario.destroy()
+        except EntidadException:
+            self.mostrar_error(mensaje="ERROR: No se pueden guardar los cambios.")
 
     def cargar_listado(self, treeview):
         """Recarga el listado a mostrar en la vista de clientes.
@@ -248,7 +265,13 @@ class ClientePopup(BasePopup):
             # remover la fila dada
             treeview.delete(i)
         # cargar los clientes del archivo
-        clientes = Cliente.buscar()
+        try:
+            clientes = Cliente.buscar()
+        except EntidadException:
+            self.mostrar_error(mensaje="Error: No hay datos para este módulo")
+            clientes = None
+        if not clientes:
+            return
         # iterar sobre el listado de clientes
         for el in clientes:
             # generar una fila en la vista tree

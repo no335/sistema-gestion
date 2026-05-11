@@ -10,7 +10,7 @@ from base import app_data
 # leer y escribir
 class Usuario(Entidad):
     # clave archivo en el que se guarda información
-    nombre_modelo = "usuario"
+    _nombre_entidad = "usuario"
 
     # usuario actual
     usuario_sesion = None
@@ -30,7 +30,7 @@ class Usuario(Entidad):
             # si no se envía usuario no hacer nada
             return False
         # busca si existe el usuario doad
-        usuario = app_data.encontrar_campo(cls.nombre_modelo, 'usuario', usuario)
+        usuario = app_data.encontrar_campo(cls._nombre_entidad, 'usuario', usuario)
         if not usuario:
             # si no existe falla
             return False
