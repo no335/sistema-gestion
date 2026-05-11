@@ -45,9 +45,11 @@ def cargar(nombre_modelo):
             ## [{'id': ---, 'nombre': ---}, {...}, ...]
             return [el for el in csv_reader]
     except KeyError:
+        # si no encuentra la clave en el diccionario
         logging.error(f"Buscar falló: Modelo no encontrado ({nombre_modelo})")
         raise AppDataException(f"Entidad '{nombre_modelo}' no tiene datos")
     except FileNotFoundError:
+        # si no encuentra el archivo en el disco
         logging.error(f"Buscar falló: Archivo no encontrado ({base_datos.get(nombre_modelo)})")
         raise AppDataException(f"Entidad '{nombre_modelo}' no tiene datos")
 
@@ -58,9 +60,6 @@ def encontrar_campo(nombre_modelo, campo, valor):
     que tenga el valor recibido en el campo dado
     -Supone que todos los valores son str-
     """
-    ## **pendiente** MANEJO EXCEPCION si el campo dado no existe
-    ## en eltipo de objeto dado
-
     # carga los objetos un list
     diccionarios = cargar(nombre_modelo)
     # itera en el list
@@ -125,7 +124,6 @@ def guardar(nombre_modelo, listado, columnas):
     """Escribe en el archivo asociado a nombre_modelo en 
     base_datos el listado recibido de diccionarios"""
     try:
-        ## pendiente MANEJO EXCEPCION si recibe objeto equivocado
         with open(base_datos.get(nombre_modelo), 'w') as data_file:
             ## pendiente MANEJO EXCEPCION si no puede escribir
             # utilizar el escritor de diccionarios en la librería csv
@@ -139,13 +137,15 @@ def guardar(nombre_modelo, listado, columnas):
                 # escribir la fila
                 csv_writer.writerow(row)
     except KeyError:
+        # si no encuentra la clave en el diccionario
         logging.error(f"Buscar falló: Modelo no encontrado ({nombre_modelo})")
         raise AppDataException(f"{nombre_modelo} no tiene datos")
     except FileNotFoundError:
+        # si falla al leer el archivo
         logging.error(f"Buscar falló: Archivo no encontrado ({base_datos.get(nombre_modelo)})")
         raise AppDataException(f"{nombre_modelo} no tiene datos")
 
-# prueba lectura
+# prueba de lectura generales
 def prueba_lectura():
     clientes = cargar('clientes')
     for i in clientes[0:3]:
