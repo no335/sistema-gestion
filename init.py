@@ -11,7 +11,7 @@ from modulos.compra.vista_compra import CompraPopup
 from modulos.empleado.vista_empleado import EmpleadoPopup
 from modulos.login.vista_login import LoginPopup
 from modulos.servicio.vista_servicio import ServicioPopup
-from modulos.venta.vista_venta import VentaPopup
+from modulos.reserva.vista_reserva import ReservaPopup
 
 def pruebas_cliente():
     from modulos.cliente.pruebas_cliente import prueba_creacion, prueba_actualizacion, prueba_creacion_error, prueba_actualizacion_error
@@ -140,15 +140,15 @@ popup_servicio.pack(
 )
 
 # generar un botón Ventas al recuadro 2
-popup_venta = ttk.Button(
+popup_reserva = ttk.Button(
     frame2,
-    text='Ventas',
+    text='Reservas',
     # al hacer clic llamar el abrir popup con la clase para venta
     command=lambda: abrir_popup(VentaPopup, root)
 )
 # agregar el botón Ventas al recuadro 2
 # utilizando el apilamiento
-popup_venta.pack(
+popup_reserva.pack(
     ipadx=5, # espaciamiento horizontal
     ipady=5, # espaciamiento vertical
     expand=True # ampliar para ocupar todo el area
