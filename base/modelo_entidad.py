@@ -57,6 +57,7 @@ class Entidad():
             try:
                 diccionario = app_data.encontrar_id(cls._nombre_entidad, id)
             except app_data.AppDataException:
+                # si falla hacer un log del error y devolver un error de entidad
                 logger.error(f"Entidad.buscar<{cls._nombre_entidad}>(id={id})")
                 raise EntidadException("No puede leer objeto")
             if not diccionario:
@@ -68,6 +69,7 @@ class Entidad():
             try:
                 diccionarios = app_data.cargar(cls._nombre_entidad)
             except:
+                # si falla hacer un log del error y devolver un error de entidad
                 logger.error(f"Entidad.buscar<{cls._nombre_entidad}>(id={id})")
                 raise EntidadException("No puede leer objeto")
             if not diccionarios:
@@ -82,6 +84,7 @@ class Entidad():
             if el in self.columnas:
                 setattr(self, el, diccionario[el])
             else:
+                # si falla hacer un log del error y devolver un error de entidad
                 logger.error(f'Entridad.actualizar: La propiedad {el} no existe en {self._nombre_entidad}')
                 raise EntidadException(f"No exite la propiedad {el}")
     
@@ -98,6 +101,7 @@ class Entidad():
                 #si tiene id entonces reemplazarlo en la fila en que está
                 app_data.actualizar(self._nombre_entidad, self.diccionario(), self.columnas)
         except app_data.AppDataException as e:
+            # si falla hacer un log del error y devolver un error de entidad
             logger.error(f"Entidad.guardar<{self._nombre_entidad}>(id={id}): {e}")
             raise EntidadException("No puede escribir objeto")
 
