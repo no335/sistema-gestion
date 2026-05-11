@@ -13,10 +13,10 @@ class EntidadException(Exception):
 
 # define una clase
 class Entidad():
-    # propiedad de la clase
-    # el campo nombre_modelo guarda la clave en 
+    # propiedad privada de la clase
+    # el campo _nombre_entidad guarda la clave en 
     # el diccionario app_data.base_datos
-    nombre_modelo = 'entidad'
+    _nombre_entidad = 'entidad'
 
     # propiedad de la clase
     # el listado de columnas se usa para
@@ -55,9 +55,9 @@ class Entidad():
         if id is not None:
             # buscar la fila con ese id, y obtenerla como un diccionario
             try:
-                diccionario = app_data.encontrar_id(cls.nombre_modelo, id)
+                diccionario = app_data.encontrar_id(cls._nombre_entidad, id)
             except app_data.AppDataException:
-                logger.error(f"Entidad.buscar<{cls.nombre_modelo}>(id={id})")
+                logger.error(f"Entidad.buscar<{cls._nombre_entidad}>(id={id})")
                 raise EntidadException("No puede leer objeto")
             if not diccionario:
                 return None
@@ -66,9 +66,9 @@ class Entidad():
         else:
             # cargar todas las filas en el archivo como un list de dict
             try:
-                diccionarios = app_data.cargar(cls.nombre_modelo)
+                diccionarios = app_data.cargar(cls._nombre_entidad)
             except:
-                logger.error(f"Entidad.buscar<{cls.nombre_modelo}>(id={id})")
+                logger.error(f"Entidad.buscar<{cls._nombre_entidad}>(id={id})")
                 raise EntidadException("No puede leer objeto")
             if not diccionarios:
                 return
@@ -82,7 +82,7 @@ class Entidad():
             if el in self.columnas:
                 setattr(self, el, diccionario[el])
             else:
-                logger.error(f'Entridad.actualizar: La propiedad {el} no existe en {self.nombre_modelo}')
+                logger.error(f'Entridad.actualizar: La propiedad {el} no existe en {self._nombre_entidad}')
                 raise EntidadException(f"No exite la propiedad {el}")
     
     # guardar un objeto
@@ -93,12 +93,12 @@ class Entidad():
         try:
             if self.id is None:
                 # agregarlo al final del archivo
-                app_data.agregar(self.nombre_modelo, self.diccionario(), self.columnas)
+                app_data.agregar(self._nombre_entidad, self.diccionario(), self.columnas)
             else:
                 #si tiene id entonces reemplazarlo en la fila en que está
-                app_data.actualizar(self.nombre_modelo, self.diccionario(), self.columnas)
+                app_data.actualizar(self._nombre_entidad, self.diccionario(), self.columnas)
         except app_data.AppDataException as e:
-            logger.error(f"Entidad.guardar<{self.nombre_modelo}>(id={id}): {e}")
+            logger.error(f"Entidad.guardar<{self._nombre_entidad}>(id={id}): {e}")
             raise EntidadException("No puede escribir objeto")
 
 
@@ -122,4 +122,4 @@ class Entidad():
     # el objeto a string
     def __str__(self):
         # imprime el diccionario generado 
-        return f"{self.nombre_modelo}::{self.diccionario()}"
+        return f"{self._nombre_entidad}::{self.diccionario()}"

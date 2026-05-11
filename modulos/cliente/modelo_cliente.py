@@ -1,7 +1,7 @@
 from ..login.modelo_usuario import Usuario
 
 class Cliente(Usuario):
-    nombre_modelo = 'cliente'
+    _nombre_entidad = 'cliente'
 
     def __init__(self, direccion=None, telefono=None, bloqueado=None, tipo=None, **kwargs):
         # definir columnas nuevas
