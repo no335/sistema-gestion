@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 # codificación de texto
 # nivel de errores
 # formato del mensaje
-logging.basicConfig(filename='log.log', encoding='utf-8', level=logging.DEBUG,
+logging.basicConfig(filename='app.log', encoding='utf-8', level=logging.DEBUG,
  format="%(asctime)s %(levelname)s %(message)s")
 
 # tiene un diccionario principal para guardar la localización de cada
