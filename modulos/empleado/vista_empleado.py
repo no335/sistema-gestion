@@ -3,6 +3,8 @@ import tkinter as tk
 from tkinter import ttk
 from base.vista_popup import BasePopup
 from .empleado_modelo import Empleado
+from base.modelo_entidad import EntidadException
+
 # logger para guardar mensajes del sistema
 import logging
 # se crea o se obtiene una instancia de logger
@@ -209,7 +211,7 @@ class EmpleadoPopup(BasePopup):
         label_3 = ttk.Label(self.formulario, text='Tipo')
         label_3.grid(row=2, column=0, padx=10, pady=5)
         entry_3 = ttk.Combobox(self.formulario)
-        entry_3['values'] = ['gerente', 'coordinador', 'campo', 'administracion']
+        entry_3['values'] = Empleado.ver_tipos()
         entry_3.grid(row=2, column=1, padx=10, pady=5)
         formulario['tipo'] = entry_3
 
