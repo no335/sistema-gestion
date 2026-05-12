@@ -15,5 +15,4 @@ class Compra(Entidad):
 # Agregar columnas especificas de compra
 # para escribir
 
-Compra.columnas = Entidad.columnas[:]
-Compra.columnas.extend(['costo_unidad', 'cantidad', 'costo', 'responsable', 'estado'])
+Compra.agregar_columnas('costo_unidad', 'cantidad', 'costo', 'responsable', 'estado')
