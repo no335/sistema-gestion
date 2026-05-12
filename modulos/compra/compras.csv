@@ -1,12 +1,12 @@
 id,nombre,fecha_creacion,costo_unidad,cantidad,costo,responsable,estado
 1,escobas,2021-02-05,20,10,,,
 2,traperos,2021-04-29,20,10,,,
-3,jab�n,2021-05-08,20,15,,,
+3,jabón,2021-05-08,25,15,375,Justin Case,aprobado
 4,servicio taxi,2021-05-19,121,1,,,rechazado
 5,servicio taxi,2021-10-31,88,1,,,pagado
 6,recogedor,2023-04-12,10,10,,,
 7,alquiler camión,2023-05-06,99,1,,Doreen D Wall,
-8,guantes,2023-05-06,25,20,,Doreen D Wall,pagado
+8,guantes,2023-05-06,25,21,525,Doreen D Wall,pagado
 9,bolsas basura,2023-05-06,20,100,,Faye King,
 10,bolsa perro,2023-05-06,15,100,,Jim Sox,
 11,recogida escombros,2023-05-06,88,1,,,

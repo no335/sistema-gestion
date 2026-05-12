@@ -68,9 +68,9 @@ class CompraPopup(BasePopup):
         treeview.column('id',  width=50)
         treeview.column('nombre',  width=150)
         treeview.column('fecha_creacion',  width=150)
-        treeview.column('cantidad',  width=150)
-        treeview.column('costo_unidad',  width=150)
-        treeview.column('costo',  width=150)
+        treeview.column('cantidad',  width=150, anchor=tk.E)
+        treeview.column('costo_unidad',  width=150, anchor=tk.E)
+        treeview.column('costo',  width=150, anchor=tk.E)
         treeview.column('responsable',  width=150)
         treeview.column('estado',  width=150)
 
@@ -247,10 +247,11 @@ class CompraPopup(BasePopup):
         entry_3.grid(row=2, column=1, padx=10, pady=5)
         
         # campo y etiqueta para campo costo total
-        label_4 = ttk.Label(self.formulario, text='Costo')
+        label_4 = ttk.Label(self.formulario, text='Costo Total')
         label_4.grid(row=3, column=0, padx=10, pady=5)
         entry_4 = ttk.Entry(self.formulario, textvariable=formulario['costo'])
         entry_4.grid(row=3, column=1, padx=10, pady=5)
+        entry_4.config(state="disabled")
 
         # campo y etiqueta para campo tipo
         label_5 = ttk.Label(self.formulario, text='Responable')
@@ -277,6 +278,15 @@ class CompraPopup(BasePopup):
         cancelar_button.grid(row=7, column=0, columnspan=2)
         # cargar los valores de la compra en la vista
         self.cargar_formulario(compra, formulario)
+        
+        def actualizar_total(*args):
+            try:
+                formulario['costo'].set(str(int(entry_2.get()) * int(entry_3.get())))
+            except ValueError:
+                formulario['costo'].set('-')
+        formulario['costo_unidad'].trace_add('write', actualizar_total)
+        formulario['cantidad'].trace_add('write', actualizar_total)
+
 
     def guardar_compra(self, compra, formulario, treeview):
         """Lee los valores en el formulario y los guarda en el
@@ -307,31 +317,7 @@ class CompraPopup(BasePopup):
     def cargar_formulario(self, entidad, formulario):
         """Recibe una instancia de entidad y llena el formulario con los
         valores que tiene este objeto"""
-        # inicializar valores en el formulario
-        # tomándolos del objeto cliente
-        for propiedad, valor in entidad.diccionario().items():
-            if propiedad not in formulario or  valor is None:
-                continue
-            if isinstance(formulario[propiedad], tk.StringVar):
-                logger.debug('%s is StrVar' % propiedad)
-                formulario[propiedad].set(valor)
-            elif isinstance(formulario[propiedad], ttk.Combobox):
-                logger.debug('%s is Combobox' % propiedad)
-                formulario[propiedad].set(valor)
-            elif isinstance(formulario[propiedad], tk.IntVar):
-                logger.debug('%s is IntVar' % propiedad)
-                try: 
-                    formulario[propiedad].set(int(valor))
-                except (ValueError, TypeError):
-                    logger.error(f"CompraPopup.cargar_formulario: Valor Int inválido para {propiedad}")
-                    formulario[propiedad].set(False)
-
-            elif isinstance(formulario[propiedad], tk.BooleanVar):
-                try:
-                    formulario[propiedad].set(bool(int(valor)))
-                except (ValueError, TypeError):
-                    logger.error(f"CompraPopup.cargar_formulario: Valor Bool inválido para {propiedad}")
-                    formulario[propiedad].set(False)
+        super().cargar_formulario(entidad, formulario) 
 
     def cargar_listado(self, treeview):
         """Recarga el listado a mostrar en la vista de clientes.
@@ -353,6 +339,7 @@ class CompraPopup(BasePopup):
         # iterar sobre el listado de compras
         for el in compras:
             # generar una fila en la vista tree
+
             treeview.insert(
                 "",
                 tk.END,
@@ -360,9 +347,9 @@ class CompraPopup(BasePopup):
                     el.id,
                     el.nombre,
                     el.fecha_creacion,
-                    el.costo_unidad,
-                    el.cantidad,
-                    el.costo,
+                    f'$ {int(el.costo_unidad):,.0f}' if el.costo_unidad else '',
+                    f'{int(el.cantidad):,.0f}' if el.cantidad else '',
+                    f'$ {int(el.costo):,.0f}' if el.costo else '',
                     el.responsable,
                     el.estado,
                 )
