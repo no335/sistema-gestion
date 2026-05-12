@@ -98,17 +98,92 @@ class CompraPopup(BasePopup):
         actualizar_button = ttk.Button(frame_1, text="Actualizar compra", command=lambda: self.abrir_formulario(treeview, nuevo=False))
         actualizar_button.pack(pady=5, padx=5, fill="x")
         # agregar boton para bloquear cliente
-        aprobar_button = ttk.Button(frame_2, text="Aprobar compra", command=lambda: self.mostrar_error("aprobar_button"))
+        aprobar_button = ttk.Button(frame_2, text="Aprobar compra", command=lambda: self.aprobar(treeview))
         aprobar_button.pack(pady=5, padx=5, fill="x")
         # agregar boton para desbloquear cliente
-        rechazar_button = ttk.Button(frame_2, text="Rechazar compra", command=lambda: self.mostrar_error("rechazar_button"))
+        rechazar_button = ttk.Button(frame_2, text="Rechazar compra", command=lambda: self.rechazar(treeview))
         rechazar_button.pack(pady=5, padx=5, fill="x")
         # agregar boton para bloquear cliente
-        factura_button = ttk.Button(frame_2, text="Cargar Factura", command=lambda: self.mostrar_error("factura_button"))
+        factura_button = ttk.Button(frame_2, text="Cargar Factura", command=lambda: self.cargar_factura(treeview))
         factura_button.pack(pady=5, padx=5, fill="x")
         # agregar boton para bloquear cliente
-        pago_button = ttk.Button(frame_2, text="Cargar Comprobante Pago", command=lambda: self.mostrar_error("pago_button"))
+        pago_button = ttk.Button(frame_2, text="Cargar Comprobante Pago", command=lambda: self.pagar(treeview))
         pago_button.pack(pady=5, padx=5, fill="x")
+    
+    def buscar_de_treeview(self, treeview):
+        try:
+            indice = treeview and treeview.item(treeview.focus())['values'][0]
+        except IndexError:
+            self.mostrar_error("Debe seleccionar una compra")
+            return
+        try:
+            compra = Compra.buscar(indice)
+        except EntidadException:
+            self.mostrar_error("Fallo en objeto")
+        return compra
+    
+    def guardar_cambios(self, compra):
+        try:
+            compra.guardar()
+            return True
+        except EntidadException:
+            self.mostrar_error(mensaje="ERROR: No se pueden guardar los cambios.")
+            return False
+
+    def aprobar(self, treeview):
+        compra = self.buscar_de_treeview(treeview)
+        if not compra:
+            return
+        if compra.estado != '':
+            self.mostrar_error("Solo puede aprobar compras nuevas")
+        else:
+            compra.estado = 'aprobado'
+            self.mostrar_error(mensaje="Pedido Aprobado", title="Éxito")
+            if self.guardar_cambios(compra):
+                # recargar el listado
+                self.cargar_listado(treeview)
+                # cerrar ventana de formulario
+                self.formulario.destroy()
+        
+    def rechazar(self, treeview):
+        compra = self.buscar_de_treeview(treeview)
+        if not compra:
+            return
+        print(compra)
+        if compra.estado != 'aprobado':
+            self.mostrar_error("Solo puede rechazar compras aprobadas")
+        else:
+            compra.estado = 'rechazado'
+            if self.guardar_cambios(compra):
+                # recargar el listado
+                self.cargar_listado(treeview)
+                self.mostrar_error(mensaje="Compra Rechazada", title="Éxito")
+
+    def cargar_factura(self, treeview):
+        compra = self.buscar_de_treeview(treeview)
+        if not compra:
+            return
+        if compra.estado != 'aprobado':
+            self.mostrar_error("Solo puede facturar compras aprobadas")
+        else:
+            compra.estado = 'pedido'
+            if self.guardar_cambios(compra):
+                # recargar el listado
+                self.cargar_listado(treeview)
+                self.mostrar_error(mensaje="Pedido Realizado", title="Éxito")
+
+    def pagar(self, treeview):
+        compra = self.buscar_de_treeview(treeview)
+        if not compra:
+            return
+        if compra.estado != 'pedido':
+            self.mostrar_error("Solo puede pagar compras en estado 'pedido'")
+        else:
+            compra.estado = 'pagado'
+            if self.guardar_cambios(compra):
+                # recargar el listado
+                self.cargar_listado(treeview)
+                self.mostrar_error(mensaje="Compra pagada", title="Éxito")
 
     def abrir_formulario(self, treeview, nuevo=True):
         """Muestra el popup con el formulario de compras.
