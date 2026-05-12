@@ -1,4 +1,4 @@
-id,nombre,fecha_creacion,tipo,jefe inmediato
+id,nombre,fecha_creacion,tipo,jefe_inmediato
 1,Amanda Hugginkiss,2021-01-02,gerente,
 2,Sherwood Burns ,2021-10-13,coordinador,1
 3,Cruz D Rivers,2022-02-10,campo,2
