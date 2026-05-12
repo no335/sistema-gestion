@@ -113,6 +113,7 @@ class Entidad():
         # diccionario agregador
         diccionario = {}
         # iterar sobre columnas
+        # print(self.columnas)
         for col in self.columnas:
             # agregar la propiedad i-esicma como string
             if getattr(self, col):
