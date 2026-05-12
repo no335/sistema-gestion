@@ -90,3 +90,58 @@ class ServicioPopup(BasePopup):
         activar_button = ttk.Button(frame_2, text="Reactivar", command=lambda: self.reactivar(treeview))
         activar_button.pack(pady=5, padx=5, fill="x")
         # agregar boton para bloquear cliente
+
+    def buscar_de_treeview(self, treeview):
+        try:
+            indice = treeview and treeview.item(treeview.focus())['values'][0]
+        except IndexError:
+            self.mostrar_error("Debe seleccionar un servicio")
+            return
+
+        try:
+            servicio = Servicio.buscar(indice)
+        except Exception:
+            servicio = None
+
+        if not servicio:
+            self.mostrar_error(mensaje="ERROR: No se puede editar servicio")
+            return
+
+        return servicio
+
+
+    def guardar_cambios(self, servicio):
+        try:
+            servicio.guardar()
+            return True
+        except Exception:
+            self.mostrar_error(mensaje="ERROR: No se pueden guardar los cambios.")
+            return False
+
+
+    def desactivar(self, treeview):
+        servicio = self.buscar_de_treeview(treeview)
+        if not servicio:
+            return
+
+        if servicio.activo is False:
+            self.mostrar_error("El servicio ya está desactivado")
+        else:
+            servicio.activo = False
+            if self.guardar_cambios(servicio):
+                self.cargar_listado(treeview)
+                self.mostrar_error(mensaje="Servicio desactivado", title="Éxito")
+
+
+    def reactivar(self, treeview):
+        servicio = self.buscar_de_treeview(treeview)
+        if not servicio:
+            return
+
+        if servicio.activo is True:
+            self.mostrar_error("El servicio ya está activo")
+        else:
+            servicio.activo = True
+            if self.guardar_cambios(servicio):
+                self.cargar_listado(treeview)
+                self.mostrar_error(mensaje="Servicio reactivado", title="Éxito")
