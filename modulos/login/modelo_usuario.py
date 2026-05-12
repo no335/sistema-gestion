@@ -40,6 +40,5 @@ class Usuario(Entidad):
         # si tiene éxito
         cls.usuario_sesion = usuario
         return True
-
-Usuario.columnas.extend(['usuario', 'clave'])
+Usuario.agregar_columnas('usuario', 'clave')
 

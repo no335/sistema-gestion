@@ -33,6 +33,16 @@ class Entidad():
         self.nombre = nombre
         self.fecha_creacion = fecha_creacion
 
+    @classmethod
+    # Agregar columnas especificas de la subclase
+    # y reemplazar la referencia para no modificar columnas
+    # de la superclase
+    def agregar_columnas(cls, *columnas):
+        cls.columnas = cls.columnas[:]
+        if len(columnas):
+            cls.columnas.extend(columnas)
+        print(cls.columnas)
+
     # metodo de clase para generar una instancia desde un diccionario
     @classmethod
     def desde_diccionario(cls, detalle):

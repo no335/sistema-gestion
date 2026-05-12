@@ -12,6 +12,4 @@ class Cliente(Usuario):
 
         super().__init__(**kwargs)
 
-# Agregar columnas especificas de clietne
-# para escribir
-Cliente.columnas.extend(['direccion', 'telefono', 'bloqueado', 'tipo'])
+Cliente.agregar_columnas('direccion', 'telefono', 'bloqueado', 'tipo')
