@@ -34,7 +34,7 @@ def cargar(nombre_modelo):
     el diccionario base_datos"""
     # abrir el archivo para lectura
     try:
-        with open(base_datos[nombre_modelo], 'r') as data_file:
+        with open(base_datos[nombre_modelo], 'r', encoding='utf-8') as data_file:
             # utilizar la librería csv para cargar el archivo
             # como un list de diccionarios de python
             csv_reader = csv.DictReader(data_file)
@@ -124,7 +124,7 @@ def guardar(nombre_modelo, listado, columnas):
     """Escribe en el archivo asociado a nombre_modelo en 
     base_datos el listado recibido de diccionarios"""
     try:
-        with open(base_datos.get(nombre_modelo), 'w') as data_file:
+        with open(base_datos.get(nombre_modelo), 'w', encoding='utf-8') as data_file:
             ## pendiente MANEJO EXCEPCION si no puede escribir
             # utilizar el escritor de diccionarios en la librería csv
             # enviar el archivo para escribir, las columnas para escribir y 
