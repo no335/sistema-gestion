@@ -53,6 +53,5 @@ class LoginPopup(BasePopup):
             pass
         else:
             # mostrar error
-            print("Invalido")
             LoginPopup.mensaje.config(text="User or password not valid")
             pass

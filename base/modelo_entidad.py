@@ -41,7 +41,6 @@ class Entidad():
         cls.columnas = cls.columnas[:]
         if len(columnas):
             cls.columnas.extend(columnas)
-        print(cls.columnas)
 
     # metodo de clase para generar una instancia desde un diccionario
     @classmethod
