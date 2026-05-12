@@ -1,4 +1,4 @@
-id,nombre,fecha_creacion,costo
+id,nombre,fecha_creacion,descripcion,costo,responsable,activo
 1,limpieza regular,2022-01-01,100
 2,limpieza profunda,2022-01-01,200
 3,lavado tapetería,2022-01-01,75
