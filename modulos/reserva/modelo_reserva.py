@@ -12,4 +12,8 @@ class Reserva(Entidad):
         self.servicio = servicio
         self.estado = estado
 
+    @classmethod
+    def dar_estados(cls):
+        return ['agendado', 'cancelado', 'realizado', 'pagado']
+
 Reserva.agregar_columnas('fecha', 'cliente', 'empleado', 'servicio', 'estado')

@@ -9,9 +9,9 @@ id,nombre,fecha_creacion,fecha,cliente,empleado,servicio,estado
 8,RES-2022/09/23,2022-09-23,2022/09/24,Emma Tator,Chess Payne,lavado vehículo grande,cancelado
 9,RES-2022/09/29,2022-09-29,2022/09/30,Dwight A Capella,Zelda Zoule,entapetado,cancelado
 10,RES-2022/10/04,2022-10-04,2022/10/05,Zenda Flowers,Ollie Tabooger,instalación muebles,cancelado
-11,RES-2022/10/11,2022-10-11,2022/10/12,0,,,
+11,RES-2022/10/11,2022-10-11,2022/10/12,0,,,agendado
 12,RES-2023/01/07,2023-01-07,2023/01/08,12,,lavado vehículo grande,
-13,RES-2023/01/31,2023-01-31,2023/02/01,15,,,
+13,RES-2023/01/31,2023-01-31,2023/02/01,15,,,pagado
 14,RES-2024/01/11,2024-01-11,2024/01/12,8,,,cancelado
 15,RES-2024/01/21,2024-01-21,2024/01/22,0,,,
 16,RES-2024/05/12,2024-05-12,2024/05/13,14,,,

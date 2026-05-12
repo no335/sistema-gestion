@@ -96,17 +96,89 @@ class ReservaPopup(BasePopup):
         actualizar_button = ttk.Button(frame_1, text="Actualizar reserva", command=lambda: self.abrir_formulario(treeview, nuevo=False))
         actualizar_button.pack(pady=5, padx=5, fill="x")
         # agregar boton para bloquear cliente
-        aprobar_button = ttk.Button(frame_2, text="Confirmar reserva", command=lambda: self.aprobar(treeview))
+        aprobar_button = ttk.Button(frame_2, text="Confirmar reserva", command=lambda: self.confirmar(treeview))
         aprobar_button.pack(pady=5, padx=5, fill="x")
         # agregar boton para desbloquear cliente
-        rechazar_button = ttk.Button(frame_2, text="Cancelar reserva", command=lambda: self.rechazar(treeview))
+        rechazar_button = ttk.Button(frame_2, text="Cancelar reserva", command=lambda: self.cancelar(treeview))
         rechazar_button.pack(pady=5, padx=5, fill="x")
         # agregar boton para bloquear cliente
-        factura_button = ttk.Button(frame_2, text="Reserva completada", command=lambda: self.cargar_factura(treeview))
+        factura_button = ttk.Button(frame_2, text="Reserva completada", command=lambda: self.completar(treeview))
         factura_button.pack(pady=5, padx=5, fill="x")
         # agregar boton para bloquear cliente
         pago_button = ttk.Button(frame_2, text="Reserva pagada", command=lambda: self.pagar(treeview))
         pago_button.pack(pady=5, padx=5, fill="x")
+    
+    def confirmar(self, treeview):
+        reserva = self.buscar_de_treeview(treeview)
+        if not reserva:
+            return
+        if reserva.estado != '':
+            self.mostrar_error("Solo puede confirmar nuevos")
+        else:
+            reserva.estado = 'agendado'
+            if self.guardar_cambios(reserva):
+                # recargar el listado
+                self.cargar_listado(treeview)
+                self.mostrar_error(mensaje="Reserva Agendada", title="Éxito")
+    
+    def cancelar(self, treeview):
+        reserva = self.buscar_de_treeview(treeview)
+        if not reserva:
+            return
+        if reserva.estado != 'agendado':
+            self.mostrar_error("Solo puede confirmar servicios agendados")
+        else:
+            reserva.estado = 'cancelado'
+            if self.guardar_cambios(reserva):
+                # recargar el listado
+                self.cargar_listado(treeview)
+                self.mostrar_error(mensaje="Reserva Cancelada", title="Éxito")
+    
+    def completar(self, treeview):
+        reserva = self.buscar_de_treeview(treeview)
+        if not reserva:
+            return
+        if reserva.estado != 'agendado':
+            self.mostrar_error("Solo puede marcar como completados los serivicios agendados")
+        else:
+            reserva.estado = 'realizado'
+            if self.guardar_cambios(reserva):
+                # recargar el listado
+                self.cargar_listado(treeview)
+                self.mostrar_error(mensaje="Servicio Realizado", title="Éxito")
+    
+    def pagar(self, treeview):
+        reserva = self.buscar_de_treeview(treeview)
+        if not reserva:
+            return
+        if reserva.estado != 'realizado':
+            self.mostrar_error("Solo puede marcar como pagos servicios realizados")
+        else:
+            reserva.estado = 'pagado'
+            if self.guardar_cambios(reserva):
+                # recargar el listado
+                self.cargar_listado(treeview)
+                self.mostrar_error(mensaje="Servicio Pagado", title="Éxito")
+
+    def buscar_de_treeview(self, treeview):
+        try:
+            indice = treeview and treeview.item(treeview.focus())['values'][0]
+        except IndexError:
+            self.mostrar_error("Debe seleccionar una reserva")
+            return
+        try:
+            reserva = Reserva.buscar(indice)
+        except EntidadException:
+            self.mostrar_error("Fallo en objeto")
+        return reserva
+
+    def guardar_cambios(self, reserva):
+        try:
+            reserva.guardar()
+            return True
+        except EntidadException:
+            self.mostrar_error(mensaje="ERROR: No se pueden guardar los cambios.")
+            return False
 
     def abrir_formulario(self, treeview, nuevo=True):
         """Muestra el popup con el formulario de reservas.
@@ -191,7 +263,7 @@ class ReservaPopup(BasePopup):
         label_6 = ttk.Label(self.formulario, text='Estado')
         label_6.grid(row=5, column=0, padx=10, pady=10)
         entry_6 = ttk.Combobox(self.formulario)
-        entry_6['values'] = ['agendado', 'cancelado', 'realizado', 'pagado']
+        entry_6['values'] = Reserva.dar_estados()
         entry_6.grid(row=5, column=1, padx=10, pady=5)
         formulario['estado'] = entry_6
 
