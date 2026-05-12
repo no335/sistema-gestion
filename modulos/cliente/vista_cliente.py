@@ -79,19 +79,24 @@ class ClientePopup(BasePopup):
         tree_scrollx.pack(side=tk.BOTTOM, fill=tk.X)
         # la vertical a la derecha
         tree_scrolly.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        frame_1 = ttk.Frame(self.popup)
+        frame_1.pack(side=tk.LEFT, padx=10)
+        frame_2 = ttk.Frame(self.popup)
+        frame_2.pack(side=tk.RIGHT, padx=10)
 
         # agregar boton para nuevo cliente
-        crear_button = ttk.Button(self.popup, text="Nuevo cliente", command=lambda: self.abrir_formulario(treeview, nuevo=True))
-        crear_button.pack(pady=5, padx=5)
+        crear_button = ttk.Button(frame_1, text="Nuevo cliente", command=lambda: self.abrir_formulario(treeview, nuevo=True))
+        crear_button.pack(pady=5, padx=5, fill='x')
         # agregar boton para actualizar cliente
-        actualizar_button = ttk.Button(self.popup, text="Actualizar cliente", command=lambda: self.abrir_formulario(treeview, nuevo=False))
-        actualizar_button.pack(pady=5, padx=5)
+        actualizar_button = ttk.Button(frame_1, text="Actualizar cliente", command=lambda: self.abrir_formulario(treeview, nuevo=False))
+        actualizar_button.pack(pady=5, padx=5, fill='x')
         # agregar boton para bloquear cliente
-        bloquear_button = ttk.Button(self.popup, text="Bloquear cliente", command=lambda: self.bloquear(treeview))
-        bloquear_button.pack(pady=5, padx=5)
+        bloquear_button = ttk.Button(frame_2, text="Bloquear cliente", command=lambda: self.bloquear(treeview))
+        bloquear_button.pack(pady=5, padx=5, fill='x')
         # agregar boton para desbloquear cliente
-        desbloquear_button = ttk.Button(self.popup, text="Desbloquear cliente", command=lambda: self.desbloquear(treeview))
-        desbloquear_button.pack(pady=5, padx=5)
+        desbloquear_button = ttk.Button(frame_2, text="Desbloquear cliente", command=lambda: self.desbloquear(treeview))
+        desbloquear_button.pack(pady=5, padx=5, fill='x')
     
     def bloquear(self, treeview):
         """Cambia el estado de bloqueado de un cliente a 1"""
