@@ -2,9 +2,15 @@
 import tkinter as tk
 from tkinter import ttk
 from base.vista_popup import BasePopup
-
 from .modelo_compra import Compra
+from modulos.empleado.empleado_modelo import Empleado
 from base.modelo_entidad import EntidadException
+# logger para guardar mensajes del sistema
+import logging
+# se crea o se obtiene una instancia de logger
+# relacionada con el nombre del módulo
+logger = logging.getLogger(__name__)
+
 
 class CompraPopup(BasePopup):
 
@@ -31,11 +37,10 @@ class CompraPopup(BasePopup):
                 'nombre',
                 'fecha_creacion',
                 'costo_unidad',
+                'cantidad',
                 'costo',
                 'responsable',
-                'aprobado',
-                'comprado',
-                'pagado',
+                'estado',
             )
         )
         # agregar la barra de desplazamiento horizontal al tree
@@ -54,22 +59,20 @@ class CompraPopup(BasePopup):
         treeview.heading('nombre',  text='nombre')
         treeview.heading('fecha_creacion',  text='fecha_creacion')
         treeview.heading('costo_unidad',  text='costo_unidad')
+        treeview.heading('cantidad',  text='cantidad')
         treeview.heading('costo',  text='costo')
         treeview.heading('responsable',  text='responsable')
-        treeview.heading('aprobado',  text='aprobado')
-        treeview.heading('comprado',  text='comprado')
-        treeview.heading('pagado',  text='pagado')
+        treeview.heading('estado',  text='estado')
 
         # configurar las columnas
         treeview.column('id',  width=50)
         treeview.column('nombre',  width=150)
         treeview.column('fecha_creacion',  width=150)
+        treeview.column('cantidad',  width=150)
         treeview.column('costo_unidad',  width=150)
         treeview.column('costo',  width=150)
         treeview.column('responsable',  width=150)
-        treeview.column('aprobado',  width=150)
-        treeview.column('comprado',  width=150)
-        treeview.column('pagado',  width=150)
+        treeview.column('estado',  width=150)
 
         # agregar la vista tree al frame
         # ocupar todo el espacio
@@ -108,7 +111,152 @@ class CompraPopup(BasePopup):
         pago_button.pack(pady=5, padx=5, fill="x")
 
     def abrir_formulario(self, treeview, nuevo=True):
-        print("Not yet")
+        """Muestra el popup con el formulario de compras.
+        Recibe treeview el objeto tree  y nuevo un booleano para decir si es un objeto nuevo
+        o no"""
+        if nuevo:
+            # si es nuevo generar una nueva instancia
+            compra = Compra()
+        else:
+            try:
+                indice = treeview and treeview.item(treeview.focus())['values'][0]
+            except IndexError:
+                self.mostrar_error("Debe seleccionar una compra")
+                return
+            #si no es nuevo revisar qué 
+            # 1 - esta seleccionado
+            # 2 - tiene el id definido en la primera columna la 0
+            # buscar el cliente con ese id
+            try:
+                compra = Compra.buscar(indice)
+            except EntidadException:
+                compra = None
+        if not compra:
+            self.mostrar_error(mensaje="ERROR: No se puede editar compra")
+            return
+        # abrir el popup relacionarlo con la ventana raiz existente
+        # y guardarlo en una propiedad de la clase
+        self.formulario = tk.Toplevel(self.root)
+        # utilizar el título recibido
+        self.formulario.title("Formulario Compra")
+        # determinar el tamaño de la ventana
+        self.formulario.geometry('300x300')
+        # cambiar el ícono
+        self.formulario.iconbitmap('./assets/rocket_space_icon_185991.ico')
+        # guardar las variables en un diccionario 
+        formulario = {
+            'nombre': tk.StringVar(),
+            'costo_unidad': tk.IntVar(),
+            'cantidad': tk.IntVar(),
+            'costo': tk.IntVar(),
+            'responsable': None, #combobox item
+            'estado': None # combobox item
+        }
+        
+        # campo y etiqueta para campo nombre
+        label_1 = ttk.Label(self.formulario, text='Nombre')
+        label_1.grid(row=0, column=0, padx=10, pady=5)
+        entry_1 = ttk.Entry(self.formulario, textvariable=formulario['nombre'])
+        entry_1.grid(row=0, column=1, padx=10, pady=5)
+        
+        # campo y etiqueta para campo costo unitario
+        label_2 = ttk.Label(self.formulario, text='Costo unidad')
+        label_2.grid(row=1, column=0, padx=10, pady=5)
+        entry_2 = ttk.Entry(self.formulario, textvariable=formulario['costo_unidad'])
+        entry_2.grid(row=1, column=1, padx=10, pady=5)
+        
+        # campo y etiqueta para campo cantidad
+        label_3 = ttk.Label(self.formulario, text='Cantidad')
+        label_3.grid(row=2, column=0, padx=10, pady=5)
+        entry_3 = ttk.Entry(self.formulario, textvariable=formulario['cantidad'])
+        entry_3.grid(row=2, column=1, padx=10, pady=5)
+        
+        # campo y etiqueta para campo costo total
+        label_4 = ttk.Label(self.formulario, text='Costo')
+        label_4.grid(row=3, column=0, padx=10, pady=5)
+        entry_4 = ttk.Entry(self.formulario, textvariable=formulario['costo'])
+        entry_4.grid(row=3, column=1, padx=10, pady=5)
+
+        # campo y etiqueta para campo tipo
+        label_5 = ttk.Label(self.formulario, text='Responable')
+        label_5.grid(row=4, column=0, padx=10, pady=5)
+        entry_5 = ttk.Combobox(self.formulario)
+        entry_5['values'] = [el.nombre for el in Empleado.buscar()]
+        entry_5.grid(row=4, column=1, padx=10, pady=5)
+        formulario['responsable'] = entry_5
+
+        # campo y etiqueta para campo comprado
+        label_6 = ttk.Label(self.formulario, text='Estado')
+        label_6.grid(row=5, column=0, padx=10, pady=10)
+        entry_6 = ttk.Combobox(self.formulario)
+        entry_6['values'] = ['aprobado', 'rechazado', 'pedido', 'recibido', 'pagado']
+        entry_6.grid(row=5, column=1, padx=10, pady=5)
+        formulario['estado'] = entry_6
+
+        # botón guardar --- llama a self.guardar_compra al 
+        # recibir un clic
+        guardar_button = ttk.Button(self.formulario, text="Guardar", command=lambda: self.guardar_compra(compra, formulario, treeview))
+        guardar_button.grid(row=6, column=0, columnspan=2)
+        # boton cancelar
+        cancelar_button = ttk.Button(self.formulario, text="Cancelar", command=lambda: self.formulario.destroy())
+        cancelar_button.grid(row=7, column=0, columnspan=2)
+        # cargar los valores de la compra en la vista
+        self.cargar_formulario(compra, formulario)
+
+    def guardar_compra(self, compra, formulario, treeview):
+        """Lee los valores en el formulario y los guarda en el
+        objeto y luego lo guarda en el disco"""
+        compra.actualizar({
+            # tomar valor del campo entry con un StringVal
+            'nombre': formulario['nombre'].get(),
+            # tomar valor del campo entry con un IntVal
+            'costo_unidad': formulario['costo_unidad'].get(),
+            # tomar valor del campo entry con un IntVal
+            'cantidad': formulario['cantidad'].get(),
+            # tomar valor del campo entry con un IntVal
+            'costo': formulario['costo'].get(),
+            # tomar valor del campo entry con un Combobox
+            'responsable': formulario['responsable'].get(),
+            # tomar valor del campo entry con un Combobox
+            'estado': formulario['estado'].get(),
+        })
+        try:
+            compra.guardar()
+            # recargar el listado
+            self.cargar_listado(treeview)
+            # cerrar ventana de formulario
+            self.formulario.destroy()
+        except EntidadException:
+            self.mostrar_error(mensaje="ERROR: No se pueden guardar los cambios.")
+        
+    def cargar_formulario(self, entidad, formulario):
+        """Recibe una instancia de entidad y llena el formulario con los
+        valores que tiene este objeto"""
+        # inicializar valores en el formulario
+        # tomándolos del objeto cliente
+        for propiedad, valor in entidad.diccionario().items():
+            if propiedad not in formulario or  valor is None:
+                continue
+            if isinstance(formulario[propiedad], tk.StringVar):
+                logger.debug('%s is StrVar' % propiedad)
+                formulario[propiedad].set(valor)
+            elif isinstance(formulario[propiedad], ttk.Combobox):
+                logger.debug('%s is Combobox' % propiedad)
+                formulario[propiedad].set(valor)
+            elif isinstance(formulario[propiedad], tk.IntVar):
+                logger.debug('%s is IntVar' % propiedad)
+                try: 
+                    formulario[propiedad].set(int(valor))
+                except (ValueError, TypeError):
+                    logger.error(f"CompraPopup.cargar_formulario: Valor Int inválido para {propiedad}")
+                    formulario[propiedad].set(False)
+
+            elif isinstance(formulario[propiedad], tk.BooleanVar):
+                try:
+                    formulario[propiedad].set(bool(int(valor)))
+                except (ValueError, TypeError):
+                    logger.error(f"CompraPopup.cargar_formulario: Valor Bool inválido para {propiedad}")
+                    formulario[propiedad].set(False)
 
     def cargar_listado(self, treeview):
         """Recarga el listado a mostrar en la vista de clientes.
@@ -138,11 +286,10 @@ class CompraPopup(BasePopup):
                     el.nombre,
                     el.fecha_creacion,
                     el.costo_unidad,
+                    el.cantidad,
                     el.costo,
                     el.responsable,
-                    'SI' if el.aprobado else '',
-                    'SI' if el.comprado else '',
-                    'SI' if el.pagado else '',
+                    el.estado,
                 )
             )
         # agregar tres filas de padding
