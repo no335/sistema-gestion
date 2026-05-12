@@ -144,7 +144,7 @@ popup_reserva = ttk.Button(
     frame2,
     text='Reservas',
     # al hacer clic llamar el abrir popup con la clase para venta
-    command=lambda: abrir_popup(VentaPopup, root)
+    command=lambda: abrir_popup(ReservaPopup, root)
 )
 # agregar el botón Ventas al recuadro 2
 # utilizando el apilamiento
