@@ -73,9 +73,9 @@ class ServicioPopup(BasePopup):
         tree_scrolly.pack(side=tk.RIGHT, fill=tk.Y)
 
         frame_1 = ttk.Frame(self.popup)
-        frame_1.pack(side=tk.LEFT, padx=10)
+        frame_1.pack(side=tk.BOTTOM, pady=5)
         frame_2 = ttk.Frame(self.popup)
-        frame_2.pack(side=tk.RIGHT, padx=10)
+        frame_2.pack(side=tk.BOTTOM, pady=5)
 
         # agregar boton para nuevo cliente
         crear_button = ttk.Button(frame_1, text="Nuevo servicio", command=lambda: self.abrir_formulario(treeview, nuevo=True))
