@@ -284,7 +284,7 @@ class ServicioPopup(BasePopup):
                     el.descripcion,
                     f'$ {int(el.costo):,.0f}' if el.costo else '',
                     el.responsable,
-                    el.activo,
+                    'SI' if el.activo else 'NO',
                 )
             )
 
