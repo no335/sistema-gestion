@@ -221,7 +221,7 @@ class CompraPopup(BasePopup):
             return
         # abrir el popup relacionarlo con la ventana raiz existente
         # y guardarlo en una propiedad de la clase
-        self.formulario = tk.Toplevel(self.root)
+        self.formulario = tk.Toplevel(self.popup)
         # utilizar el título recibido
         self.formulario.title("Formulario Compra")
         # determinar el tamaño de la ventana

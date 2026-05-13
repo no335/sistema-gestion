@@ -175,7 +175,7 @@ class ServicioPopup(BasePopup):
         if not servicio:
             return
 
-        self.formulario = tk.Toplevel(self.root)
+        self.formulario = tk.Toplevel(self.popup)
 
         self.formulario.title("Formulario Servicio")
 

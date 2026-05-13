@@ -17,9 +17,18 @@ class BasePopup():
         # la guarda como propiedad
         self.root = root
 
+    # popup de este modulo abierto
+    _popup = None
+
     # metodo para abrir la ventana
     # debe ser ampliado por las subclases
     def abrir(self, title="No title"):
+        # evitar que abra una nueva ventana
+        # leer la propiedad de clase _popup
+        if hasattr(self.__class__, '_popup') and self.__class__._popup and self.__class__._popup.children:
+            self.__class__._popup.destroy()
+            self.__class__._popup = None
+
         # abrir el popup relacionarlo con la ventana raiz existente
         # y guardarlo en una propiedad de la clase
         self.popup = tk.Toplevel(self.root)
@@ -29,6 +38,9 @@ class BasePopup():
         self.popup.geometry('400x600')
         # cambiar el ícono
         self.popup.iconbitmap('./assets/rocket_space_icon_185991.ico')
+        # actualizar el popup de la clase para cerrarlo 
+        # si se genera una nueva instancia
+        self.__class__._popup = self.popup
 
     def mostrar_error(self, mensaje, title="Error"):
         # # abrir un popup
