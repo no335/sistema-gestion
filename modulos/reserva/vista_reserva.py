@@ -188,21 +188,8 @@ class ReservaPopup(BasePopup):
             # si es nuevo generar una nueva instancia
             reserva = Reserva()
         else:
-            try:
-                indice = treeview and treeview.item(treeview.focus())['values'][0]
-            except IndexError:
-                self.mostrar_error("Debe seleccionar una reserva")
-                return
-            #si no es nuevo revisar qué 
-            # 1 - esta seleccionado
-            # 2 - tiene el id definido en la primera columna la 0
-            # buscar el cliente con ese id
-            try:
-                reserva = Reserva.buscar(indice)
-            except EntidadException:
-                reserva = None
+            reserva = self.buscar_de_treeview(treeview)
         if not reserva:
-            self.mostrar_error(mensaje="ERROR: No se puede editar reserva")
             return
         # abrir el popup relacionarlo con la ventana raiz existente
         # y guardarlo en una propiedad de la clase

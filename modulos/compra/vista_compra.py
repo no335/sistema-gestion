@@ -1,4 +1,4 @@
-# popup principal para clientes
+# popup principal para compras
 import tkinter as tk
 from tkinter import ttk
 from base.vista_popup import BasePopup
@@ -17,7 +17,7 @@ class CompraPopup(BasePopup):
     def abrir(self):
         """Genera el popup para ver lascompras"""
         # llama a la superclase para generar la ventana
-        # con titulo Cliente
+        # con titulo Compra
         super().abrir(title="Compra")
         self.popup.geometry('600x600')
         # genera un recuadro para meter la vista tree
@@ -68,6 +68,7 @@ class CompraPopup(BasePopup):
         treeview.column('id',  width=50)
         treeview.column('nombre',  width=150)
         treeview.column('fecha_creacion',  width=150)
+        # alinear a la derecha
         treeview.column('cantidad',  width=150, anchor=tk.E)
         treeview.column('costo_unidad',  width=150, anchor=tk.E)
         treeview.column('costo',  width=150, anchor=tk.E)
@@ -91,54 +92,70 @@ class CompraPopup(BasePopup):
         frame_2 = ttk.Frame(self.popup)
         frame_2.pack(side=tk.RIGHT, padx=10)
 
-        # agregar boton para nuevo cliente
+        # agregar boton para nueva compra
         crear_button = ttk.Button(frame_1, text="Nueva compra", command=lambda: self.abrir_formulario(treeview, nuevo=True))
         crear_button.pack(pady=5, padx=5, fill="x")
-        # agregar boton para actualizar cliente
+        # agregar boton para actualizar compra
         actualizar_button = ttk.Button(frame_1, text="Actualizar compra", command=lambda: self.abrir_formulario(treeview, nuevo=False))
         actualizar_button.pack(pady=5, padx=5, fill="x")
-        # agregar boton para bloquear cliente
+        # agregar boton para bloquear compra
         aprobar_button = ttk.Button(frame_2, text="Aprobar compra", command=lambda: self.aprobar(treeview))
         aprobar_button.pack(pady=5, padx=5, fill="x")
-        # agregar boton para desbloquear cliente
+        # agregar boton para desbloquear compra
         rechazar_button = ttk.Button(frame_2, text="Rechazar compra", command=lambda: self.rechazar(treeview))
         rechazar_button.pack(pady=5, padx=5, fill="x")
-        # agregar boton para bloquear cliente
+        # agregar boton para bloquear compra
         factura_button = ttk.Button(frame_2, text="Cargar Factura", command=lambda: self.cargar_factura(treeview))
         factura_button.pack(pady=5, padx=5, fill="x")
-        # agregar boton para bloquear cliente
+        # agregar boton para bloquear compra
         pago_button = ttk.Button(frame_2, text="Cargar Comprobante Pago", command=lambda: self.pagar(treeview))
         pago_button.pack(pady=5, padx=5, fill="x")
     
     def buscar_de_treeview(self, treeview):
+        """Revisa el treeview seleccionado y devuelve el modelo de compras asociado"""
         try:
+            # trata de leer el valor del id en el elemento seleccionado
+            # guarda el id que esta definido en la primera columna la 0
+            # buscar el cliente con ese id
             indice = treeview and treeview.item(treeview.focus())['values'][0]
         except IndexError:
+            # si falla muestra mensaje
             self.mostrar_error("Debe seleccionar una compra")
             return
         try:
+            # busca el objeto en el archivo por el id
             compra = Compra.buscar(indice)
         except EntidadException:
+            # si falla muestra mensaje
             self.mostrar_error("Fallo en objeto")
         return compra
     
     def guardar_cambios(self, compra):
+        """Llama a guardar o muestra un mensaje"""
         try:
             compra.guardar()
             return True
         except EntidadException:
+            # si encuentra un error de entidad muestra mensaje
             self.mostrar_error(mensaje="ERROR: No se pueden guardar los cambios.")
             return False
 
     def aprobar(self, treeview):
+        """Aprobar la compra seleccinada"""
+        # genera una instancia a partir del objeto seleccionado
         compra = self.buscar_de_treeview(treeview)
+        # si no se puede generar se detiene
         if not compra:
             return
+        # revisa el estado para aprobar
         if compra.estado != '':
             self.mostrar_error("Solo puede aprobar compras nuevas")
         else:
+            # cambiar estado
             compra.estado = 'aprobado'
+            # mostrar mensaje
             self.mostrar_error(mensaje="Pedido Aprobado", title="Éxito")
+            # guardar o mostrar mensaje
             if self.guardar_cambios(compra):
                 # recargar el listado
                 self.cargar_listado(treeview)
@@ -146,17 +163,23 @@ class CompraPopup(BasePopup):
                 self.formulario.destroy()
         
     def rechazar(self, treeview):
+        """Marcar una compra seleccionada en el treeview como rechazada"""
+        # generar instancia
         compra = self.buscar_de_treeview(treeview)
         if not compra:
+            # salir si falla al generar instancia
             return
-        print(compra)
+        # si el estado no es el deseado mostrar error
         if compra.estado != 'aprobado':
             self.mostrar_error("Solo puede rechazar compras aprobadas")
         else:
+            # en otro caso actualizar el objeto
             compra.estado = 'rechazado'
+            # escribir el archivo
             if self.guardar_cambios(compra):
                 # recargar el listado
                 self.cargar_listado(treeview)
+                # mostrar mensje exitoso
                 self.mostrar_error(mensaje="Compra Rechazada", title="Éxito")
 
     def cargar_factura(self, treeview):
@@ -193,21 +216,8 @@ class CompraPopup(BasePopup):
             # si es nuevo generar una nueva instancia
             compra = Compra()
         else:
-            try:
-                indice = treeview and treeview.item(treeview.focus())['values'][0]
-            except IndexError:
-                self.mostrar_error("Debe seleccionar una compra")
-                return
-            #si no es nuevo revisar qué 
-            # 1 - esta seleccionado
-            # 2 - tiene el id definido en la primera columna la 0
-            # buscar el cliente con ese id
-            try:
-                compra = Compra.buscar(indice)
-            except EntidadException:
-                compra = None
+            compra = self.buscar_de_treeview(treeview)
         if not compra:
-            self.mostrar_error(mensaje="ERROR: No se puede editar compra")
             return
         # abrir el popup relacionarlo con la ventana raiz existente
         # y guardarlo en una propiedad de la clase
@@ -280,13 +290,14 @@ class CompraPopup(BasePopup):
         self.cargar_formulario(compra, formulario)
         
         def actualizar_total(*args):
+            """Recalcula el total multiplicando costo_unidad y cantidad"""
             try:
                 formulario['costo'].set(str(int(entry_2.get()) * int(entry_3.get())))
             except ValueError:
                 formulario['costo'].set('-')
+        # observar cambios en costo_unidad y cantidad
         formulario['costo_unidad'].trace_add('write', actualizar_total)
         formulario['cantidad'].trace_add('write', actualizar_total)
-
 
     def guardar_compra(self, compra, formulario, treeview):
         """Lee los valores en el formulario y los guarda en el

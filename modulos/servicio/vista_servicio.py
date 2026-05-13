@@ -170,19 +170,9 @@ class ServicioPopup(BasePopup):
         if nuevo:
             servicio = Servicio()
         else:
-            try:
-                indice = treeview and treeview.item(treeview.focus())['values'][0]
-            except IndexError:
-                self.mostrar_error("Debe seleccionar un servicio")
-                return
-
-            try:
-                servicio = Servicio.buscar(indice)
-            except Exception:
-                servicio = None
+            servicio = self.buscar_de_treeview(treeview)
 
         if not servicio:
-            self.mostrar_error(mensaje="ERROR: No se puede editar servicio")
             return
 
         self.formulario = tk.Toplevel(self.root)

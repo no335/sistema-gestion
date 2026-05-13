@@ -106,8 +106,11 @@ class EmpleadoPopup(BasePopup):
     
     def buscar_de_treeview(self, treeview):
         try:
+            # buscar elemento en foco y guardar el id
+            # tiene el id definido en la primera columna la 0 de los valores
             indice = treeview and treeview.item(treeview.focus())['values'][0]
         except IndexError:
+            # si falla mostrar error
             self.mostrar_error("Debe seleccionar una empleado")
             return
         try:
@@ -140,7 +143,6 @@ class EmpleadoPopup(BasePopup):
                 self.formulario.destroy()
         
     def reactivar(self, treeview):
-        empleado = self.buscar_de_treeview(treeview)
         if not empleado:
             return
         print(empleado)
@@ -161,21 +163,8 @@ class EmpleadoPopup(BasePopup):
             # si es nuevo generar una nueva instancia
             empleado = Empleado()
         else:
-            try:
-                indice = treeview and treeview.item(treeview.focus())['values'][0]
-            except IndexError:
-                self.mostrar_error("Debe seleccionar una empleado")
-                return
-            #si no es nuevo revisar qué 
-            # 1 - esta seleccionado
-            # 2 - tiene el id definido en la primera columna la 0
-            # buscar el cliente con ese id
-            try:
-                empleado = Empleado.buscar(indice)
-            except EntidadException:
-                empleado = None
+            empleado = self.buscar_de_treeview(treeview)
         if not empleado:
-            self.mostrar_error(mensaje="ERROR: No se puede editar empleado")
             return
         # abrir el popup relacionarlo con la ventana raiz existente
         # y guardarlo en una propiedad de la clase
