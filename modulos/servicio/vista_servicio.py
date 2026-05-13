@@ -90,3 +90,192 @@ class ServicioPopup(BasePopup):
         activar_button = ttk.Button(frame_2, text="Reactivar", command=lambda: self.reactivar(treeview))
         activar_button.pack(pady=5, padx=5, fill="x")
         # agregar boton para bloquear cliente
+    def buscar_de_treeview(self, treeview):
+        try:
+            indice = treeview and treeview.item(treeview.focus())['values'][0]
+        except IndexError:
+            self.mostrar_error("Debe seleccionar un servicio")
+            return
+
+        try:
+            servicio = Servicio.buscar(indice)
+        except Exception:
+            servicio = None
+
+        if not servicio:
+            self.mostrar_error(mensaje="ERROR: No se puede editar servicio")
+            return
+
+        return servicio
+
+
+    def guardar_cambios(self, servicio):
+        try:
+            servicio.guardar()
+            return True
+        except Exception:
+            self.mostrar_error(mensaje="ERROR: No se pueden guardar los cambios.")
+            return False
+
+
+    def desactivar(self, treeview):
+        servicio = self.buscar_de_treeview(treeview)
+
+        if not servicio:
+            return
+
+        if servicio.activo is False:
+            self.mostrar_error("El servicio ya está desactivado")
+        else:
+            servicio.activo = False
+
+            if self.guardar_cambios(servicio):
+                self.cargar_listado(treeview)
+                self.mostrar_error(mensaje="Servicio desactivado", title="Éxito")
+
+
+    def reactivar(self, treeview):
+        servicio = self.buscar_de_treeview(treeview)
+
+        if not servicio:
+            return
+
+        if servicio.activo is True:
+            self.mostrar_error("El servicio ya está activo")
+        else:
+            servicio.activo = True
+
+            if self.guardar_cambios(servicio):
+                self.cargar_listado(treeview)
+                self.mostrar_error(mensaje="Servicio reactivado", title="Éxito")
+
+
+    def abrir_formulario(self, treeview, nuevo=True):
+
+        if nuevo:
+            servicio = Servicio()
+        else:
+            try:
+                indice = treeview and treeview.item(treeview.focus())['values'][0]
+            except IndexError:
+                self.mostrar_error("Debe seleccionar un servicio")
+                return
+
+            try:
+                servicio = Servicio.buscar(indice)
+            except Exception:
+                servicio = None
+
+        if not servicio:
+            self.mostrar_error(mensaje="ERROR: No se puede editar servicio")
+            return
+
+        self.formulario = tk.Toplevel(self.root)
+
+        self.formulario.title("Formulario Servicio")
+
+        self.formulario.geometry('300x300')
+
+        formulario = {
+            'nombre': tk.StringVar(),
+            'descripcion': tk.StringVar(),
+            'costo': tk.IntVar(),
+            'responsable': tk.StringVar(),
+            'activo': tk.BooleanVar()
+        }
+
+        label_1 = ttk.Label(self.formulario, text='Nombre')
+        label_1.grid(row=0, column=0, padx=10, pady=5)
+        entry_1 = ttk.Entry(self.formulario, textvariable=formulario['nombre'])
+        entry_1.grid(row=0, column=1, padx=10, pady=5)
+
+        label_2 = ttk.Label(self.formulario, text='Descripción')
+        label_2.grid(row=1, column=0, padx=10, pady=5)
+        entry_2 = ttk.Entry(self.formulario, textvariable=formulario['descripcion'])
+        entry_2.grid(row=1, column=1, padx=10, pady=5)
+
+        label_3 = ttk.Label(self.formulario, text='Costo')
+        label_3.grid(row=2, column=0, padx=10, pady=5)
+        entry_3 = ttk.Entry(self.formulario, textvariable=formulario['costo'])
+        entry_3.grid(row=2, column=1, padx=10, pady=5)
+
+        label_4 = ttk.Label(self.formulario, text='Responsable')
+        label_4.grid(row=3, column=0, padx=10, pady=5)
+        entry_4 = ttk.Entry(self.formulario, textvariable=formulario['responsable'])
+        entry_4.grid(row=3, column=1, padx=10, pady=5)
+
+        guardar_button = ttk.Button(
+            self.formulario,
+            text="Guardar",
+            command=lambda: self.guardar_servicio(servicio, formulario, treeview)
+        )
+        guardar_button.grid(row=5, column=0, columnspan=2)
+
+        cancelar_button = ttk.Button(
+            self.formulario,
+            text="Cancelar",
+            command=lambda: self.formulario.destroy()
+        )
+        cancelar_button.grid(row=6, column=0, columnspan=2)
+
+        self.cargar_formulario(servicio, formulario)
+
+
+    def guardar_servicio(self, servicio, formulario, treeview):
+
+        servicio.actualizar({
+            'nombre': formulario['nombre'].get(),
+            'descripcion': formulario['descripcion'].get(),
+            'costo': formulario['costo'].get(),
+            'responsable': formulario['responsable'].get(),
+        })
+
+        try:
+            servicio.guardar()
+
+            self.cargar_listado(treeview)
+
+            self.formulario.destroy()
+
+        except Exception:
+            self.mostrar_error(mensaje="ERROR: No se pueden guardar los cambios.")
+
+
+    def cargar_formulario(self, entidad, formulario):
+
+        super().cargar_formulario(entidad, formulario)
+
+
+    def cargar_listado(self, treeview):
+
+        for i in treeview.get_children():
+            treeview.delete(i)
+
+        try:
+            servicios = Servicio.buscar()
+        except Exception:
+            self.mostrar_error(mensaje="Error: No hay datos para este módulo")
+            servicios = None
+
+        if not servicios:
+            return
+
+        for el in servicios:
+
+            treeview.insert(
+                "",
+                tk.END,
+                values=(
+                    el.id,
+                    el.nombre,
+                    el.fecha_creacion,
+                    el.descripcion,
+                    f'$ {int(el.costo):,.0f}' if el.costo else '',
+                    el.responsable,
+                    el.activo,
+                )
+            )
+
+        treeview.insert("", tk.END, values=("", "", "", "", "", "", ""))
+        treeview.insert("", tk.END, values=("", "", "", "", "", "", ""))
+        treeview.insert("", tk.END, values=("", "", "", "", "", "", ""))
